@@ -1,0 +1,53 @@
+#%% Import libraries and read file as dataframe
+
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv('test_FSCar_ddMMYYYY_TrackN_setupID2.csv')
+
+#%% Index non-empty values and extract time vector
+idx1 = df.spd_rpmFL.notnull()
+idx2 = df.spd_rpmFR.notnull()
+idx3 = df.trq_NmFL.notnull()
+idx4 = df.trq_NmFR.notnull()
+
+time = np.array(df.Time_s).astype(np.double)
+# %% Create figure
+import matplotlib.pyplot as plt
+
+
+fig = plt.figure(figsize = (1500/300, 2550/300), dpi=300)
+plt.rcParams.update({'font.sans-serif':'Helvetica'})
+fig, ((ax1, ax2)) = plt.subplots(nrows=2, ncols=1)
+
+plt.suptitle('Python figure')
+plt.xlabel('Time [s]')
+
+# Plot the first set of variables/signals
+ax1.plot(time[idx1], df.spd_rpmFL[idx1], label = 'spd_rpmFL', linewidth = .5)
+ax1.plot(time[idx2], df.spd_rpmFR[idx2], label = 'spd_rpmFR', linewidth = .5)
+ax1.grid(b=True, which='major', color='k', linestyle='--', alpha=0.2)
+ax1.grid(b=True, which='minor', color='k', linestyle='--', alpha=0.1)
+ax1.minorticks_on()
+ax1.set_ylabel('Speed [rpm]', fontsize = 11)
+ax1.set_xlim([600, 650])
+ax1.legend(loc = 'upper right', fontsize = 6)
+ax1.set_title('Speed data', fontsize = 11)
+
+
+# Plot the second set of variables/signals
+ax2.plot(time[idx3], df.trq_NmFL[idx3], label = 'trq_NmFL', linewidth = .5)
+ax2.plot(time[idx4], df.trq_NmFR[idx4], label = 'trq_NmFR', linewidth = .5)
+ax2.grid(b=True, which='major', color='k', linestyle='--', alpha=0.2)
+ax2.grid(b=True, which='minor', color='k', linestyle='--', alpha=0.1)
+ax2.minorticks_on()
+ax2.set_ylabel('Torque [Nm]', fontsize = 11)
+ax2.set_xlim([600, 650])
+ax2.legend(loc = 'upper right', fontsize = 6)
+ax2.set_title('Torque data', fontsize = 11)
+
+
+# Display figure
+plt.tight_layout()
+fig.show()
+plt.savefig('Python_fig.jpeg', dpi=300)

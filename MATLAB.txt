@@ -1,0 +1,72 @@
+%% Time-Series Visualization Script
+%
+% This script reads vehicle test data from a CSV file, filters out missing
+% values, and plots time-series data for wheel speed and torque.
+%
+% FUNCTIONALITY:
+%  - Reads a CSV file containing time, speed, and torque signals.
+%  - Filters non-empty (non-NaN) data points to ensure clean plotting.
+%  - Creates a tiled figure layout with two subplots:
+%       (1) Front-left and front-right wheel speeds (rpm)
+%       (2) Front-left and front-right wheel torques (Nm)
+%  - Applies consistent time limits, labels, gridlines, and legends.
+%
+% INPUT:
+%  - CSV file with at least the following columns:
+%       Time_s, spd_rpmFL, spd_rpmFR, trq_NmFL, trq_NmFR
+%
+% OUTPUT:
+%  - A figure displaying the time-series plots for the selected data.
+%
+% NOTES:
+%  - Update the filename variable to match the input dataset.
+%  - Adjust the x-axis limits as needed to zoom into a specific time window.
+%
+% Example:
+%  filename = 'test_FSCar_01012025_Track1_setupID2.csv';
+%  Run the script to visualize wheel speed and torque trends.
+
+
+%% Read the CSV file
+filename = 'test_FSCar_ddMMYYYY_TrackN_setupID2.csv'
+t = readtable(filename);
+
+
+%% Index non-empty values and extract time vector
+idx1 = ~isnan(t.spd_rpmFL);
+idx2 = ~isnan(t.spd_rpmFR);
+
+idx3 = ~isnan(t.trq_NmFL);
+idx4 = ~isnan(t.trq_NmFR);
+
+time = t.Time_s;
+
+%% Create a figure with a tiled layout
+time_series = figure('Name', ['Time series from ' filename], 'Position', [10 10 900 600]);
+tiles = tiledlayout(2,1);
+title(tiles, 'MATLAB Plot')
+xlabel(tiles, 'Time [s]')
+
+%% Plot the first set of variables/signals
+nexttile
+title('Speed data')
+hold all
+plot(t.Time_s(idx1), t.spd_rpmFL(idx1), 'DisplayName', 'spd_rpmFL')
+plot(t.Time_s(idx2), t.spd_rpmFR(idx2), 'DisplayName', 'spd_rpmFR')
+xlim([600, 650])
+ylabel('Speed [rpm]')
+grid minor
+legend('interpreter', 'none')
+ax1 = gca;
+
+%% Plot a second set of variables/signals
+nexttile
+title('Torque data')
+hold on
+plot(t.Time_s(idx3), t.trq_NmFL(idx3), 'DisplayName', 'trq_NmFL')
+plot(t.Time_s(idx4), t.trq_NmFR(idx4), 'DisplayName', 'trq_NmFR')
+ax2 = gca;
+xlim([600, 650])
+ylabel('Torque [Nm]')
+grid minor
+legend('interpreter', 'none')
